@@ -48,13 +48,14 @@ for ns in argocd testing production; do
   kubectl create namespace "${ns}" --dry-run=client -o yaml | kubectl apply -f -
 done
 
-echo "==> [4/7] Installing NGINX Ingress Controller for kind..."
+echo "==> [4/7] Installing NGINX Ingress Controller & pinning to control-plane (port 80)..."
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
-echo "    Waiting for NGINX Ingress controller pod to become Ready..."
-kubectl wait --namespace ingress-nginx \
-  --for=condition=ready pod \
-  --selector=app.kubernetes.io/component=controller \
-  --timeout=180s
+# Upstream kind manifest only sets nodeSelector kubernetes.io/os=linux, which on a 3-node cluster
+# schedules NGINX onto a worker node instead of control-plane (where extraPortMappings 80:80 lives).
+kubectl patch deployment ingress-nginx-controller -n ingress-nginx --type merge \
+  -p '{"spec":{"template":{"spec":{"nodeSelector":{"kubernetes.io/os":"linux","node-role.kubernetes.io/control-plane":""}}}}}'
+echo "    Waiting for NGINX Ingress controller pod on control-plane to become Ready..."
+kubectl rollout status deployment/ingress-nginx-controller -n ingress-nginx --timeout=180s
 
 echo "==> [5/7] Installing ArgoCD (--server-side) & configuring HTTP Ingress mode..."
 kubectl apply -n argocd --server-side --force-conflicts \
@@ -98,14 +99,14 @@ echo ""
 echo "========================================================================"
 echo "  3-Node ArgoCD GitOps Environment Ready on macOS + Docker Desktop!"
 echo "========================================================================"
-echo "  ArgoCD UI:          http://argocd.localhost"
+echo "  ArgoCD UI:          http://argocd.127.0.0.1.sslip.io"
 echo "    Username:         admin"
 echo "    Password:         ${ARGO_PASS}"
 echo ""
-echo "  Testing App (Auto): http://testing.localhost"
-echo "    Predict API:      http://testing.localhost/predict?experience=5.5"
+echo "  Testing App (Auto): http://testing.127.0.0.1.sslip.io"
+echo "    Predict API:      http://testing.127.0.0.1.sslip.io/predict?experience=5.5"
 echo ""
-echo "  Production App:     http://prod.localhost  (Currently OutOfSync by design!)"
-echo "    -> Click 'Sync' on flask-app-production in http://argocd.localhost"
+echo "  Production App:     http://prod.127.0.0.1.sslip.io  (Currently OutOfSync by design!)"
+echo "    -> Click 'Sync' on flask-app-production in http://argocd.127.0.0.1.sslip.io"
 echo "    -> OR run: make sync-prod"
 echo "========================================================================"

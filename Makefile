@@ -37,7 +37,7 @@ load-local: ## Build native arm64 image locally and side-load into all 3 kind no
 	@./scripts/load-local.sh
 
 credentials: ## Print ArgoCD UI URL and initial admin password
-	@echo "ArgoCD URL: http://argocd.localhost"
+	@echo "ArgoCD URL: http://argocd.127.0.0.1.sslip.io"
 	@echo "Username:   admin"
 	@printf "Password:   " && kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo ""
 

@@ -9,6 +9,18 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
+    # sslip.io resolves to 127.0.0.1 automatically in Safari, Firefox, Chrome, and curl on macOS without touching /etc/hosts
+    - host: argocd.127.0.0.1.sslip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  number: 80
+    # Also support argocd.localhost (works in Chrome natively, or in Safari/curl if added to /etc/hosts)
     - host: argocd.localhost
       http:
         paths:

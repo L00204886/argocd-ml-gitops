@@ -3,7 +3,7 @@
 Repeatable, single-command automation for a 3-node Kubernetes (`kind`) GitOps pipeline running on **Apple Silicon (`arm64`) macOS + Docker Desktop**, featuring:
 
 - **3-Node `kind` Cluster (`argocd-three-node`)**: 1 `control-plane` + 2 `worker` nodes.
-- **Zero `port-forward` Networking**: NGINX Ingress Controller mapped to macOS port `80` (`http://argocd.localhost`, `http://testing.localhost`, `http://prod.localhost`).
+- **Zero `port-forward` Networking**: NGINX Ingress Controller mapped to macOS port `80` (`http://argocd.127.0.0.1.sslip.io`, `http://testing.127.0.0.1.sslip.io`, `http://prod.127.0.0.1.sslip.io` — resolves to `127.0.0.1` across Safari, Firefox, Chrome, and `curl` with zero `/etc/hosts` edits).
 - **Multi-Environment Kustomize Overlays**:
   - `testing` (`1` replica, `APP_ENV=testing`) — **Auto-Synced** (`prune: true`, `selfHeal: true`).
   - `production` (`2` replicas spread across both worker nodes, `APP_ENV=production`) — **Manual Sync** gate.
@@ -43,9 +43,9 @@ make up
 ```
 
 Once finished (~90 seconds), open:
-- **ArgoCD UI**: <http://argocd.localhost> (`admin` + password printed in terminal, or run `make credentials`)
-- **Testing App**: <http://testing.localhost> and <http://testing.localhost/predict?experience=5.5>
-- **Production App**: <http://prod.localhost> *(starts `OutOfSync` by design until you approve it!)*
+- **ArgoCD UI**: <http://argocd.127.0.0.1.sslip.io> (`admin` + password printed in terminal, or run `make credentials`)
+- **Testing App**: <http://testing.127.0.0.1.sslip.io> and <http://testing.127.0.0.1.sslip.io/predict?experience=5.5>
+- **Production App**: <http://prod.127.0.0.1.sslip.io> *(starts `OutOfSync` by design until you approve it!)*
 
 ### 4. Inspect Cluster & Sync Production
 

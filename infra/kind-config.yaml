@@ -4,14 +4,8 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
   - role: control-plane
-    kubeadmConfigPatches:
-      - |
-        kind: InitConfiguration
-        nodeRegistration:
-          kubeletExtraArgs:
-            node-labels: "ingress-ready=true"
     extraPortMappings:
-      # Maps macOS localhost:80 -> NGINX Ingress Controller inside Docker Desktop
+      # Maps macOS localhost:80 -> control-plane container:80 (where ingress-nginx-controller is pinned)
       - containerPort: 80
         hostPort: 80
         protocol: TCP

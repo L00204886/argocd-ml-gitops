@@ -17,6 +17,9 @@ patches:
     patch: |-
       - op: replace
         path: /spec/rules/0/host
+        value: prod.127.0.0.1.sslip.io
+      - op: replace
+        path: /spec/rules/1/host
         value: prod.localhost
   - patch: |-
       apiVersion: apps/v1

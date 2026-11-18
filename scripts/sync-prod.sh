@@ -28,5 +28,5 @@ kubectl rollout status deployment/flask-app -n production --timeout=180s
 echo ""
 kubectl get pods -n production -o wide
 echo ""
-echo "Production is live at: http://prod.localhost"
-echo "Prediction endpoint:   http://prod.localhost/predict?experience=5.5"
+echo "Production is live at: http://prod.127.0.0.1.sslip.io"
+echo "Prediction endpoint:   http://prod.127.0.0.1.sslip.io/predict?experience=5.5"
