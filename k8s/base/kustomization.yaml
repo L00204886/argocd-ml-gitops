@@ -9,4 +9,4 @@ resources:
 images:
   - name: flask-app-image
     newName: docker.io/l00204886/flask-mlops-app
-    newTag: initial
+    newTag: "e7ee084"
