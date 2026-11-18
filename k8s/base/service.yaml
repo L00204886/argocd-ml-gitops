@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-app-service
+  labels:
+    app: flask-app
+spec:
+  # NodePort is omitted intentionally so Kubernetes dynamically allocates non-conflicting
+  # NodePorts per namespace (matching the tutorial), while NGINX Ingress routes port 80 traffic cleanly.
+  type: NodePort
+  selector:
+    app: flask-app
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5000

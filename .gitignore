@@ -1,0 +1,16 @@
+# Keep lecture handouts & local secrets out of the public GitOps repository
+*.docx
+~$*.docx
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
+
+# Python / ML build artifacts (model.pkl is generated deterministically at build time)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+app/model.pkl

@@ -1,0 +1,19 @@
+# 3-Node kind Cluster Configuration (1 control-plane + 2 workers)
+# Kept in infra/ outside k8s/ so ArgoCD never attempts to parse it as a Kubernetes workload.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      # Maps macOS localhost:80 -> NGINX Ingress Controller inside Docker Desktop
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+  - role: worker
+  - role: worker
